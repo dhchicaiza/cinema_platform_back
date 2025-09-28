@@ -1,0 +1,65 @@
+# Render deployment configuration for Movies Platform Backend API
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: movies-platform-api
+    runtime: node
+    plan: free
+    region: ohio
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+
+    # Environment variables (set these in Render dashboard)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false  # Set manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false  # Set manually in Render dashboard
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: BCRYPT_SALT_ROUNDS
+        value: 12
+      - key: EMAIL_SERVICE
+        value: gmail
+      - key: EMAIL_USER
+        sync: false  # Set manually in Render dashboard
+      - key: EMAIL_PASSWORD
+        sync: false  # Set manually in Render dashboard
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false  # Set manually in Render dashboard
+      - key: CLOUDINARY_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: CLOUDINARY_API_SECRET
+        sync: false  # Set manually in Render dashboard
+      - key: FRONTEND_URL
+        value: https://movies-platform.vercel.app
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 100
+
+    # Scaling configuration
+    scaling:
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUPercent: 70
+
+    # Disk configuration
+    disk:
+      name: movies-platform-disk
+      sizeGB: 1
+      mountPath: /opt/render/project/src/logs
+
+    # HTTP routing
+    routes:
+      - type: redirect
+        source: /*
+        destination: https://movies-platform-api.onrender.com/$1
+        permanent: false

@@ -1,0 +1,22 @@
+{
+  "source": {
+    "include": ["./dist"],
+    "includePattern": "\\.(js)$",
+    "exclude": ["node_modules/"]
+  },
+  "opts": {
+    "destination": "./docs/",
+    "recurse": true,
+    "readme": "./README.md"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "markdown": {
+    "parser": "gfm"
+  }
+}

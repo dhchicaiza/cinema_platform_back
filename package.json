@@ -1,0 +1,42 @@
+{
+  "name": "cinema-platform",
+  "version": "1.0.0",
+  "description": "Backend API for Cinema Streaming Platform - Node.js + Express + TypeScript + MongoDB",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "docs": "jsdoc -c jsdoc.conf.json",
+    "docs:watch": "concurrently \"npm run docs\" \"nodemon --watch src --ext ts --exec npm run docs\"",
+    "lint": "echo 'Linting...'",
+    "test": "echo \"Tests to be implemented\" && exit 0"
+  },
+  "keywords": ["cinema", "movies", "streaming", "backend", "api", "typescript", "express", "mongodb"],
+  "author": "Cinema Platform Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.2",
+    "nodemailer": "^7.0.6"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.5.2",
+    "@types/nodemailer": "^7.0.1",
+    "concurrently": "^9.2.1",
+    "jsdoc": "^4.0.4",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

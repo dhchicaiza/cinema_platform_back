@@ -1,8 +1,8 @@
-# 🎬 Movies Platform Backend API
+# Cinema Platform Backend API
 
 A robust and scalable backend API for a movie streaming platform built with Node.js, Express, TypeScript, and MongoDB.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -16,22 +16,22 @@ A robust and scalable backend API for a movie streaming platform built with Node
 - [Contributing](#contributing)
 - [License](#license)
 
-## ✨ Features
+## Features
 
 ### Sprint 1 - Authentication & User Management
-- ✅ **User Registration & Authentication**
+- **User Registration & Authentication**
   - Secure user registration with email validation
   - JWT-based authentication system
   - Password hashing with bcrypt (12 salt rounds)
   - Email verification and password recovery
 
-- ✅ **User Profile Management**
+- **User Profile Management**
   - Complete CRUD operations for user profiles
   - Secure password change functionality
   - Account deletion with confirmation
   - Avatar upload support
 
-- ✅ **Security Features**
+- **Security Features**
   - Helmet.js for security headers
   - CORS configuration for cross-origin requests
   - Rate limiting to prevent abuse
@@ -39,20 +39,20 @@ A robust and scalable backend API for a movie streaming platform built with Node
   - SQL injection and XSS protection
 
 ### Upcoming Features (Future Sprints)
-- 🔄 **Movie Management** (Sprint 1)
+- **Movie Management** (Sprint 1)
   - Movie catalog with search and filters
   - Video streaming integration (Cloudinary/Pexels)
   - Subtitle support (Spanish/English)
 
-- 🔄 **User Interactions** (Sprint 2)
+- **User Interactions** (Sprint 2)
   - Favorites system
   - Movie ratings (1-5 stars)
 
-- 🔄 **Social Features** (Sprint 3)
+- **Social Features** (Sprint 3)
   - Comments and reviews
   - User activity tracking
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js 5.x
@@ -65,7 +65,7 @@ A robust and scalable backend API for a movie streaming platform built with Node
 - **Documentation**: JSDoc
 - **Deployment**: Render
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before running this project, make sure you have:
 
@@ -75,12 +75,12 @@ Before running this project, make sure you have:
 - **Gmail** account with App Password for email service
 - **Cloudinary** account for file storage (planned)
 
-## 🚀 Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-team/movies-platform.git
-   cd movies-platform/backend
+   git clone https://github.com/dhchicaiza/cinema_platform_back.git
+   cd cinema_platform_back
    ```
 
 2. **Install dependencies**
@@ -100,7 +100,7 @@ Before running this project, make sure you have:
    npm run build
    ```
 
-## ⚙️ Configuration
+## Configuration
 
 Create a `.env` file in the backend root directory with the following variables:
 
@@ -136,14 +136,14 @@ RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-### 🔐 Security Notes
+### Security Notes
 
 - **JWT_SECRET**: Must be at least 32 characters long
 - **EMAIL_PASSWORD**: Use Gmail App Password, not your regular password
 - **MONGODB_URI**: Include your actual MongoDB Atlas credentials
 - Never commit the `.env` file to version control
 
-## 🏃‍♂️ Development
+## Development
 
 ### Available Scripts
 
@@ -170,7 +170,7 @@ npm run lint
 npm test
 ```
 
-### 🔄 Development Workflow
+### Development Workflow
 
 1. **Start development server**
    ```bash
@@ -183,7 +183,7 @@ npm test
 
 4. **Health check endpoint** `http://localhost:5000/health`
 
-### 📁 Project Structure
+### Project Structure
 
 ```
 backend/
@@ -216,7 +216,7 @@ backend/
 └── README.md           # This file
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 ### Base URL
 - **Development**: `http://localhost:5000`
@@ -298,7 +298,7 @@ All API responses follow this standard format:
 }
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Render Deployment
 
@@ -332,7 +332,7 @@ The API includes a health check endpoint at `/health` that returns:
 ```json
 {
   "success": true,
-  "message": "Movies Platform API is running successfully",
+  "message": "Cinema Platform API is running successfully",
   "data": {
     "environment": "production",
     "timestamp": "2025-09-28T10:00:00.000Z",
@@ -342,7 +342,7 @@ The API includes a health check endpoint at `/health` that returns:
 }
 ```
 
-## 🧪 Testing
+## Testing
 
 Testing framework will be implemented in future iterations. Planned testing includes:
 
@@ -359,7 +359,7 @@ npm test
 npm run test:coverage
 ```
 
-## 📖 Code Documentation
+## Code Documentation
 
 This project uses JSDoc for comprehensive code documentation.
 
@@ -382,7 +382,7 @@ Documentation will be available at `http://localhost:5000/docs`
 - Examples are provided for complex functions
 - TypeScript interfaces are fully documented
 
-## 🔒 Security Features
+## Security Features
 
 - **Helmet.js**: Sets various HTTP headers for security
 - **CORS**: Configured for specific frontend origins
@@ -392,7 +392,7 @@ Documentation will be available at `http://localhost:5000/docs`
 - **JWT Security**: Secure token generation and validation
 - **Error Handling**: Prevents information leakage in production
 
-## 🤝 Contributing
+## Contributing
 
 1. **Fork the repository**
 2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
@@ -409,15 +409,15 @@ Documentation will be available at `http://localhost:5000/docs`
 - Write meaningful commit messages
 - Add tests for new features (when testing is implemented)
 
-## 📝 License
+## License
 
 This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
 
 ## 👥 Team
 
-- **Movies Platform Team** - Initial work and ongoing development
+- **Cinema Platform Team** - Initial work and ongoing development
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Express.js community for excellent documentation
 - MongoDB for robust database solutions
@@ -426,4 +426,4 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Movies Platform Backend API** - Built with ❤️ for movie enthusiasts everywhere! 🎬🍿
+**Cinema Platform Backend API** - Built with for movie enthusiasts everywhere!

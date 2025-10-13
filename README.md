@@ -14,7 +14,6 @@ A robust and scalable backend API for a movie streaming platform built with Node
 - [Deployment](#deployment)
 - [Testing](#testing)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
@@ -411,7 +410,7 @@ Documentation will be available at `http://localhost:5000/docs`
 
 ## License
 
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the ....
 
 ## 👥 Team
 

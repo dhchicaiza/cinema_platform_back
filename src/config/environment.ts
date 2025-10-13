@@ -200,10 +200,13 @@ class EnvironmentManager {
       throw new Error('BCRYPT_SALT_ROUNDS must be between 10 and 15.');
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(config.emailUser)) {
-      throw new Error(`Invalid email format: ${config.emailUser}`);
+    // Validate email user (can be email or SMTP username)
+    // For SMTP services like Mailtrap, username may not be an email format
+    if (config.emailService !== 'smtp') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(config.emailUser)) {
+        throw new Error(`Invalid email format: ${config.emailUser}`);
+      }
     }
 
     // Validate rate limiting values

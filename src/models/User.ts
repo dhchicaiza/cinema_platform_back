@@ -56,7 +56,6 @@ const UserSchema = new Schema<IUserDocument>(
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         'Please provide a valid email address',
       ],
-      index: true,
     },
     password: {
       type: String,
@@ -101,7 +100,6 @@ const UserSchema = new Schema<IUserDocument>(
     isActive: {
       type: Boolean,
       default: true,
-      index: true,
     },
     passwordResetToken: {
       type: String,

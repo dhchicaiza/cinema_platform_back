@@ -226,18 +226,18 @@ backend/
 
 All authentication endpoints are prefixed with `/api/auth`
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/register` | Register new user | ❌ |
-| POST | `/login` | User login | ❌ |
-| POST | `/logout` | User logout | ✅ |
-| GET | `/profile` | Get user profile | ✅ |
-| PUT | `/profile` | Update user profile | ✅ |
-| DELETE | `/account` | Delete user account | ✅ |
-| POST | `/forgot-password` | Request password reset | ❌ |
-| POST | `/reset-password` | Reset password with token | ❌ |
-| POST | `/change-password` | Change password | ✅ |
-| POST | `/verify-token` | Verify JWT token | ✅ |
+| Method  | Endpoint            | Description               | Auth Required |
+|---------|---------------------|---------------------------|---------------|
+| POST    | `/register`         | Register new user         | ❌            |
+| POST    | `/login`            | User login                | ❌            |
+| POST    | `/logout`           | User logout               | ✅            |
+| GET     | `/profile`          | Get user profile          | ✅            |
+| PUT     | `/profile`          | Update user profile       | ✅            |
+| DELETE  | `/account`          | Delete user account       | ✅            |
+| POST    | `/forgot-password`  | Request password reset    | ❌            |
+| POST    | `/reset-password`   | Reset password with token | ❌            |
+| POST    | `/change-password`  | Change password           | ✅            |
+| POST    | `/verify-token`     | Verify JWT token          | ✅            |
 
 ### Example Requests
 
@@ -415,15 +415,10 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 👥 Team
 
-- **Cinema Platform Team** - Initial work and ongoing development
+- **Cinema Platform Team**
 
-## Acknowledgments
-
-- Express.js community for excellent documentation
-- MongoDB for robust database solutions
-- TypeScript team for type safety
-- All open-source contributors who made this project possible
-
----
-
-**Cinema Platform Backend API** - Built with for movie enthusiasts everywhere!
+- **Cristian Llanos**
+- **David Chicaiza**
+- **Johan Ceballos**
+- **Jorge Enriques**
+- **Laura Salazar**

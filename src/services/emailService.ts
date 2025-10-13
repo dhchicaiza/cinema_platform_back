@@ -49,6 +49,28 @@ class EmailService {
    * @private
    */
   private createTransporter(): Transporter {
+    // Use SMTP configuration for services like Mailtrap, SendGrid, etc.
+    if (this.config.service === 'smtp') {
+      const smtpHost = process.env.SMTP_HOST || 'live.smtp.mailtrap.io';
+      const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
+      const smtpSecure = process.env.SMTP_SECURE === 'true';
+
+      return nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpSecure,
+        auth: {
+          user: this.config.user,
+          pass: this.config.password,
+        },
+        tls: {
+          ciphers: 'SSLv3',
+          rejectUnauthorized: false,
+        },
+      });
+    }
+
+    // Default to service-based configuration (Gmail, Outlook, etc.)
     return nodemailer.createTransport({
       service: this.config.service,
       auth: {
@@ -69,10 +91,14 @@ class EmailService {
   public async verifyConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();
-      console.log('✅ Email service connection verified');
+      console.log('✅ Email service connection verified successfully');
       return true;
     } catch (error) {
       console.error('❌ Email service connection failed:', error);
+      if (environment.isDevelopment()) {
+        console.log('⚠️  Continuing in development mode - emails may not be sent');
+        return true;
+      }
       return false;
     }
   }

@@ -391,7 +391,7 @@ public async deleteAccount(
         throw createError('Password confirmation does not match new password', 400);
       }
 
-      // 👇 --- INICIO DE LA CORRECCIÓN --- 👇
+      
 
       // 1. Hashea el token que viene del frontend para que coincida con el de la BD 🔑
       const hashedToken = crypto
@@ -410,7 +410,7 @@ public async deleteAccount(
         throw createError('Invalid or expired password reset token', 400);
       }
       
-      // 👆 --- FIN DE LA CORRECCIÓN --- 👆
+      
 
       // Update password and clear reset token
       user.password = newPassword;

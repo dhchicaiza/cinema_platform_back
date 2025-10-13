@@ -20,6 +20,7 @@ import { authManager } from '../middleware/auth';
 import { emailService } from '../services/emailService';
 import { createError, notFoundError, unauthorizedError, conflictError } from '../middleware/errorHandler';
 import { environment } from '../config/environment';
+import crypto from 'crypto';
 
 /**
  * @class AuthController
@@ -269,55 +270,48 @@ class AuthController {
    * @param {NextFunction} next - Express next function
    * @returns {Promise<void>}
    */
-  public async deleteAccount(
-    req: IAuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      if (!req.user) {
-        throw unauthorizedError('User not authenticated');
-      }
-
-      const { password } = req.body;
-
-      if (!password) {
-        throw createError('Password confirmation is required to delete account', 400);
-      }
-
-      const user = await User.findById(req.user.userId).select('+password');
-      if (!user || !user.isActive) {
-        throw notFoundError('User');
-      }
-
-      // Verify password
-      const isPasswordValid = await user.comparePassword(password);
-      if (!isPasswordValid) {
-        throw unauthorizedError('Invalid password');
-      }
-
-      // Soft delete: set isActive to false
-      user.isActive = false;
-      await user.save();
-
-      // TODO: In a real application, you might want to:
-      // 1. Remove user from all related collections (favorites, ratings, comments)
-      // 2. Add the user's token to a blacklist
-      // 3. Send a confirmation email
-
-      const response: IApiResponse = {
-        success: true,
-        message: 'Account deleted successfully',
-        data: {
-          message: 'Your account has been deactivated. We\'re sorry to see you go!',
-        },
-      };
-
-      res.status(200).json(response);
-    } catch (error) {
-      next(error);
+public async deleteAccount(
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    if (!req.user) {
+      throw unauthorizedError('User not authenticated');
     }
+
+    const { password } = req.body;
+
+    if (!password) {
+      throw createError('Password confirmation is required to delete account', 400);
+    }
+
+    const user = await User.findById(req.user.userId).select('+password');
+    if (!user || !user.isActive) {
+      throw notFoundError('User');
+    }
+
+    // Verify password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      throw unauthorizedError('Invalid password');
+    }
+
+    await User.findByIdAndDelete(req.user.userId);
+
+    const response: IApiResponse = {
+      success: true,
+      message: 'Account permanently deleted', 
+      data: {
+        message: 'Your account has been permanently removed. We\'re sorry to see you go!',
+      },
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
   }
+}
 
   /**
    * @method requestPasswordReset
@@ -381,7 +375,7 @@ class AuthController {
    * @param {NextFunction} next - Express next function
    * @returns {Promise<void>}
    */
-  public async resetPassword(
+   public async resetPassword(
     req: IAuthenticatedRequest,
     res: Response,
     next: NextFunction
@@ -397,14 +391,26 @@ class AuthController {
         throw createError('Password confirmation does not match new password', 400);
       }
 
-      // Find user with valid reset token
-      const user = await User.findOne({
-        isActive: true,
-      }).select('+passwordResetToken +passwordResetExpires');
+      // 👇 --- INICIO DE LA CORRECCIÓN --- 👇
 
-      if (!user || !user.isPasswordResetTokenValid(token)) {
+      // 1. Hashea el token que viene del frontend para que coincida con el de la BD 🔑
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+      // 2. Busca al usuario por el token hasheado Y que no haya expirado 🕵️‍♂️
+      const user = await User.findOne({ 
+        passwordResetToken: hashedToken, 
+        passwordResetExpires: { $gt: Date.now() } // $gt significa "greater than" (mayor que)
+      });
+
+      // 3. Si no se encuentra un usuario, el token es inválido o expiró
+      if (!user) {
         throw createError('Invalid or expired password reset token', 400);
       }
+      
+      // 👆 --- FIN DE LA CORRECCIÓN --- 👆
 
       // Update password and clear reset token
       user.password = newPassword;
@@ -429,6 +435,7 @@ class AuthController {
       next(error);
     }
   }
+
 
   /**
    * @method changePassword

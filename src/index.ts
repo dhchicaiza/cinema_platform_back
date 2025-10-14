@@ -184,15 +184,21 @@ class Server {
       console.log('\nConnecting to database...');
       await connectToDatabase(environment.get('nodeEnv'));
 
-      // Verify email service
+      // Verify email service (non-blocking)
       console.log('\nVerifying email service...');
-      await emailService.verifyConnection();
+      try {
+        await emailService.verifyConnection();
+      } catch (error) {
+        console.log('WARNING: Email service verification failed, but continuing startup');
+        console.log('Emails may not be sent. Check EMAIL_USER and EMAIL_PASSWORD configuration.');
+      }
 
-      // Start server
-      const server = this.app.listen(this.port, () => {
+      // Start server - listen on 0.0.0.0 for cloud deployment
+      const server = this.app.listen(this.port, '0.0.0.0', () => {
         console.log('\nServer started successfully!');
         console.log(`Environment: ${environment.get('nodeEnv')}`);
         console.log(`Port: ${this.port}`);
+        console.log(`Host: 0.0.0.0`);
         console.log(`API URL: http://localhost:${this.port}`);
         console.log(`Documentation: http://localhost:${this.port}/docs`);
         console.log(`Health Check: http://localhost:${this.port}/health`);

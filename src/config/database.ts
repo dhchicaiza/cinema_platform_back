@@ -97,7 +97,7 @@ class DatabaseManager {
   public async connect(environment: Environment = 'development'): Promise<void> {
     try {
       if (this.isConnected) {
-        console.log('📊 Database already connected');
+        console.log('Database already connected');
         return;
       }
 
@@ -114,11 +114,11 @@ class DatabaseManager {
       await mongoose.connect(config.uri, config.options);
 
       this.isConnected = true;
-      console.log('✅ Successfully connected to MongoDB Atlas');
-      console.log(`📊 Database: ${mongoose.connection.name}`);
-      console.log(`🌍 Environment: ${environment}`);
+      console.log('Successfully connected to MongoDB Atlas');
+      console.log(`Database: ${mongoose.connection.name}`);
+      console.log(`Environment: ${environment}`);
     } catch (error) {
-      console.error('❌ MongoDB connection error:', error);
+      console.error('MongoDB connection error:', error);
       throw error;
     }
   }
@@ -131,15 +131,15 @@ class DatabaseManager {
   public async disconnect(): Promise<void> {
     try {
       if (!this.isConnected) {
-        console.log('📊 Database already disconnected');
+        console.log('Database already disconnected');
         return;
       }
 
       await mongoose.disconnect();
       this.isConnected = false;
-      console.log('✅ Successfully disconnected from MongoDB');
+      console.log('Successfully disconnected from MongoDB');
     } catch (error) {
-      console.error('❌ MongoDB disconnection error:', error);
+      console.error('MongoDB disconnection error:', error);
       throw error;
     }
   }
@@ -152,18 +152,18 @@ class DatabaseManager {
   private setupEventListeners(): void {
     // Connection successful
     mongoose.connection.on('connected', () => {
-      console.log('🔗 Mongoose connected to MongoDB');
+      console.log('Mongoose connected to MongoDB');
     });
 
     // Connection error
     mongoose.connection.on('error', (error) => {
-      console.error('❌ Mongoose connection error:', error);
+      console.error('Mongoose connection error:', error);
       this.isConnected = false;
     });
 
     // Connection disconnected
     mongoose.connection.on('disconnected', () => {
-      console.log('🔌 Mongoose disconnected from MongoDB');
+      console.log('Mongoose disconnected from MongoDB');
       this.isConnected = false;
     });
 
@@ -171,10 +171,10 @@ class DatabaseManager {
     process.on('SIGINT', async () => {
       try {
         await this.disconnect();
-        console.log('🛑 MongoDB connection closed due to application termination');
+        console.log('MongoDB connection closed due to application termination');
         process.exit(0);
       } catch (error) {
-        console.error('❌ Error during graceful shutdown:', error);
+        console.error('Error during graceful shutdown:', error);
         process.exit(1);
       }
     });
@@ -225,7 +225,7 @@ class DatabaseManager {
       await mongoose.connection.db?.admin().ping();
       return true;
     } catch (error) {
-      console.error('❌ Database health check failed:', error);
+      console.error('Database health check failed:', error);
       return false;
     }
   }
@@ -244,10 +244,10 @@ class DatabaseManager {
     try {
       if (this.isConnected && mongoose.connection.db) {
         await mongoose.connection.db.dropDatabase();
-        console.log('🗑️ Database dropped successfully');
+        console.log('Database dropped successfully');
       }
     } catch (error) {
-      console.error('❌ Error dropping database:', error);
+      console.error('Error dropping database:', error);
       throw error;
     }
   }

@@ -91,12 +91,12 @@ class EmailService {
   public async verifyConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();
-      console.log('✅ Email service connection verified successfully');
+      console.log('Email service connection verified successfully');
       return true;
     } catch (error) {
-      console.error('❌ Email service connection failed:', error);
+      console.error('Email service connection failed:', error);
       if (environment.isDevelopment()) {
-        console.log('⚠️  Continuing in development mode - emails may not be sent');
+        console.log('WARNING: Continuing in development mode - emails may not be sent');
         return true;
       }
       return false;
@@ -122,7 +122,7 @@ class EmailService {
       const result = await this.transporter.sendMail(mailOptions);
 
       if (environment.isDevelopment()) {
-        console.log('📧 Email sent successfully:', {
+        console.log('Email sent successfully:', {
           to: emailData.to,
           subject: emailData.subject,
           messageId: result.messageId,
@@ -131,7 +131,7 @@ class EmailService {
 
       return true;
     } catch (error) {
-      console.error('❌ Failed to send email:', error);
+      console.error('Failed to send email:', error);
       return false;
     }
   }
@@ -146,7 +146,7 @@ class EmailService {
   public async sendWelcomeEmail(email: string, firstName: string): Promise<boolean> {
     const emailData: IEmailData = {
       to: email,
-      subject: 'Welcome to Movies Platform! 🎬',
+      subject: 'Welcome to Movies Platform!',
       text: `Welcome to Movies Platform, ${firstName}! We're excited to have you on board.`,
       html: this.generateWelcomeEmailHTML(firstName),
     };
@@ -169,7 +169,7 @@ class EmailService {
   ): Promise<boolean> {
     const emailData: IEmailData = {
       to: email,
-      subject: 'Password Reset Request - Movies Platform 🔐',
+      subject: 'Password Reset Request - Movies Platform',
       text: `Hello ${fullName}, you requested a password reset. Click the link to reset your password: ${resetUrl}`,
       html: this.generatePasswordResetEmailHTML(fullName, resetUrl),
     };
@@ -190,7 +190,7 @@ class EmailService {
   ): Promise<boolean> {
     const emailData: IEmailData = {
       to: email,
-      subject: 'Password Reset Successful - Movies Platform ✅',
+      subject: 'Password Reset Successful - Movies Platform',
       text: `Hello ${fullName}, your password has been successfully reset.`,
       html: this.generatePasswordResetConfirmationEmailHTML(fullName),
     };
@@ -208,7 +208,7 @@ class EmailService {
   public async sendAccountDeletionEmail(email: string, fullName: string): Promise<boolean> {
     const emailData: IEmailData = {
       to: email,
-      subject: 'Account Deletion Confirmation - Movies Platform 👋',
+      subject: 'Account Deletion Confirmation - Movies Platform',
       text: `Hello ${fullName}, your account has been successfully deleted. We're sorry to see you go!`,
       html: this.generateAccountDeletionEmailHTML(fullName),
     };
@@ -243,18 +243,18 @@ class EmailService {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🎬 Welcome to Movies Platform!</h1>
+            <h1>Welcome to Movies Platform!</h1>
           </div>
           <div class="content">
             <h2>Hello ${firstName}!</h2>
-            <p>We're thrilled to have you join our community of movie enthusiasts! 🍿</p>
+            <p>We're thrilled to have you join our community of movie enthusiasts!</p>
             <p>Here's what you can do with your new account:</p>
             <ul>
-              <li>🎥 Explore our vast collection of movies</li>
-              <li>⭐ Rate and review your favorite films</li>
-              <li>❤️ Create your personal favorites list</li>
-              <li>💬 Share your thoughts with comments</li>
-              <li>📱 Enjoy seamless streaming on any device</li>
+              <li>Explore our vast collection of movies</li>
+              <li>Rate and review your favorite films</li>
+              <li>Create your personal favorites list</li>
+              <li>Share your thoughts with comments</li>
+              <li>Enjoy seamless streaming on any device</li>
             </ul>
             <p>Ready to start your movie journey?</p>
             <a href="${environment.get('frontendUrl')}" class="btn">Start Exploring Movies</a>
@@ -298,7 +298,7 @@ class EmailService {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🔐 Password Reset Request</h1>
+            <h1>Password Reset Request</h1>
           </div>
           <div class="content">
             <h2>Hello ${fullName},</h2>
@@ -306,7 +306,7 @@ class EmailService {
             <p>Click the button below to reset your password:</p>
             <a href="${resetUrl}" class="btn">Reset My Password</a>
             <div class="warning">
-              <strong>⚠️ Important:</strong>
+              <strong>IMPORTANT:</strong>
               <ul>
                 <li>This link will expire in 1 hour</li>
                 <li>If you didn't request this reset, please ignore this email</li>
@@ -354,7 +354,7 @@ class EmailService {
       <body>
         <div class="container">
           <div class="header">
-            <h1>✅ Password Reset Successful</h1>
+            <h1>Password Reset Successful</h1>
           </div>
           <div class="content">
             <h2>Hello ${fullName},</h2>
@@ -401,7 +401,7 @@ class EmailService {
       <body>
         <div class="container">
           <div class="header">
-            <h1>👋 Goodbye from Movies Platform</h1>
+            <h1>Goodbye from Movies Platform</h1>
           </div>
           <div class="content">
             <h2>Hello ${fullName},</h2>
@@ -415,7 +415,7 @@ class EmailService {
             </ul>
             <p>...has been removed from our system.</p>
             <p>If you change your mind in the future, you're always welcome to create a new account and rejoin our movie-loving community!</p>
-            <p>Thank you for being part of Movies Platform. We wish you all the best! 🎬✨</p>
+            <p>Thank you for being part of Movies Platform. We wish you all the best!</p>
           </div>
           <div class="footer">
             <p>This is an automated message. Please do not reply to this email.</p>

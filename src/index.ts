@@ -75,7 +75,7 @@ class Server {
     // Request logging in development
     if (environment.isDevelopment()) {
       this.app.use((req: Request, res: Response, next) => {
-        console.log(`📝 ${req.method} ${req.path} - ${new Date().toISOString()}`);
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
         next();
       });
     }
@@ -141,7 +141,7 @@ class Server {
     this.app.get('/', (req: Request, res: Response) => {
       const response: IApiResponse = {
         success: true,
-        message: 'Welcome to Movies Platform API! 🎬',
+        message: 'Welcome to Movies Platform API!',
         data: {
           message: 'API is running successfully',
           version: '1.0.0',
@@ -174,50 +174,50 @@ class Server {
   public async start(): Promise<void> {
     try {
       // Print configuration
-      console.log('🚀 Starting Movies Platform Backend API...\n');
+      console.log('Starting Movies Platform Backend API...\n');
 
       if (environment.isDevelopment()) {
         environment.printConfig();
       }
 
       // Connect to database
-      console.log('\n📊 Connecting to database...');
+      console.log('\nConnecting to database...');
       await connectToDatabase(environment.get('nodeEnv'));
 
       // Verify email service
-      console.log('\n📧 Verifying email service...');
+      console.log('\nVerifying email service...');
       await emailService.verifyConnection();
 
       // Start server
       const server = this.app.listen(this.port, () => {
-        console.log('\n✅ Server started successfully!');
-        console.log(`🌐 Environment: ${environment.get('nodeEnv')}`);
-        console.log(`🚪 Port: ${this.port}`);
-        console.log(`📡 API URL: http://localhost:${this.port}`);
-        console.log(`📖 Documentation: http://localhost:${this.port}/docs`);
-        console.log(`❤️  Health Check: http://localhost:${this.port}/health`);
-        console.log('\n🎬 Movies Platform API is ready to serve requests!');
+        console.log('\nServer started successfully!');
+        console.log(`Environment: ${environment.get('nodeEnv')}`);
+        console.log(`Port: ${this.port}`);
+        console.log(`API URL: http://localhost:${this.port}`);
+        console.log(`Documentation: http://localhost:${this.port}/docs`);
+        console.log(`Health Check: http://localhost:${this.port}/health`);
+        console.log('\nMovies Platform API is ready to serve requests!');
       });
 
       // Graceful shutdown
       process.on('SIGTERM', () => {
-        console.log('\n🛑 SIGTERM received. Shutting down gracefully...');
+        console.log('\nSIGTERM received. Shutting down gracefully...');
         server.close(() => {
-          console.log('✅ Server closed successfully');
+          console.log('Server closed successfully');
           process.exit(0);
         });
       });
 
       process.on('SIGINT', () => {
-        console.log('\n🛑 SIGINT received. Shutting down gracefully...');
+        console.log('\nSIGINT received. Shutting down gracefully...');
         server.close(() => {
-          console.log('✅ Server closed successfully');
+          console.log('Server closed successfully');
           process.exit(0);
         });
       });
 
     } catch (error) {
-      console.error('❌ Failed to start server:', error);
+      console.error('Failed to start server:', error);
       process.exit(1);
     }
   }

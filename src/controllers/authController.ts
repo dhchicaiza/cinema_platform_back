@@ -355,8 +355,8 @@ public async deleteAccount(
 
         // Log success in development
         if (environment.isDevelopment()) {
-          console.log(`🔑 Password reset token for ${email}: ${resetToken}`);
-          console.log(`🔗 Reset URL: ${resetUrl}`);
+          console.log(`Password reset token for ${email}: ${resetToken}`);
+          console.log(`Reset URL: ${resetUrl}`);
         }
       }
 

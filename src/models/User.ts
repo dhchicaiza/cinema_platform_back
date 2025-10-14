@@ -259,9 +259,10 @@ UserSchema.methods.toSafeObject = function (): Partial<IUserDocument> {
 };
 
 /**
- * @description Index for email field (unique)
+ * @description Index for active users
+ * Note: Email index is automatically created by unique: true in schema
  */
-UserSchema.index({ email: 1 }, { unique: true });
+UserSchema.index({ isActive: 1 });
 
 /**
  * @description Index for active users

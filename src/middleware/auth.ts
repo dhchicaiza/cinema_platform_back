@@ -228,7 +228,7 @@ export const authenticate = async (
 
     next();
   } catch (error) {
-    console.error('❌ Authentication middleware error:', error);
+    console.error('Authentication middleware error:', error);
 
     const response: IApiResponse = {
       success: false,
@@ -283,7 +283,7 @@ export const optionalAuthenticate = async (
     // Continue regardless of authentication status
     next();
   } catch (error) {
-    console.error('❌ Optional authentication middleware error:', error);
+    console.error('Optional authentication middleware error:', error);
     // Continue even if there's an error in optional authentication
     next();
   }
@@ -368,7 +368,7 @@ export const validateTokenOwnership = (resourceUserIdField: string = 'userId') =
 
       next();
     } catch (error) {
-      console.error('❌ Token ownership validation error:', error);
+      console.error('Token ownership validation error:', error);
 
       const response: IApiResponse = {
         success: false,

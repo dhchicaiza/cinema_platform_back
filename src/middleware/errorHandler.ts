@@ -213,7 +213,7 @@ export const errorHandler = (
 ): void => {
   // Log error details in development
   if (environment.isDevelopment()) {
-    console.error('🚨 Error Details:', {
+    console.error('ERROR DETAILS:', {
       name: error.name,
       message: error.message,
       stack: error.stack,
@@ -224,7 +224,7 @@ export const errorHandler = (
     });
   } else {
     // Log only essential info in production
-    console.error('🚨 Error:', {
+    console.error('ERROR:', {
       name: error.name,
       message: error.message,
       url: req.originalUrl,

@@ -20,6 +20,8 @@ import { authManager } from '../middleware/auth';
 import { emailService } from '../services/emailService';
 import { createError, notFoundError, unauthorizedError, conflictError } from '../middleware/errorHandler';
 import { environment } from '../config/environment';
+import { translate } from '../config/i18n';
+import { getLanguage } from '../middleware/language';
 import crypto from 'crypto';
 
 /**
@@ -43,11 +45,12 @@ class AuthController {
   ): Promise<void> {
     try {
       const userData: IUserRegistration = req.body;
+      const lang = getLanguage(req);
 
       // Check if user already exists
       const existingUser = await User.findOne({ email: userData.email }).lean();
       if (existingUser) {
-        throw conflictError('Email address already exists');
+        throw conflictError(translate('auth.emailExists', lang));
       }
 
       // Create new user
@@ -69,7 +72,7 @@ class AuthController {
 
       const response: IApiResponse = {
         success: true,
-        message: 'User registered successfully',
+        message: translate('auth.registerSuccess', lang),
         data: {
           user: userResponse,
           token,
@@ -98,18 +101,19 @@ class AuthController {
   ): Promise<void> {
     try {
       const { email, password }: IUserLogin = req.body;
+      const lang = getLanguage(req);
 
       // Find user by email and include password for comparison
       const user = await User.findOne({ email, isActive: true }).select('+password');
 
       if (!user) {
-        throw unauthorizedError('Invalid email or password');
+        throw unauthorizedError(translate('auth.invalidCredentials', lang));
       }
 
       // Check password
       const isPasswordValid = await user.comparePassword(password);
       if (!isPasswordValid) {
-        throw unauthorizedError('Invalid email or password');
+        throw unauthorizedError(translate('auth.invalidCredentials', lang));
       }
 
       // Generate JWT token
@@ -124,7 +128,7 @@ class AuthController {
 
       const response: IApiResponse = {
         success: true,
-        message: `Welcome back, ${user.firstName}!`,
+        message: translate('auth.loginSuccess', lang, { name: user.firstName }),
         data: {
           user: userResponse,
           token,
@@ -152,14 +156,15 @@ class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
+      const lang = getLanguage(req);
       // Note: With JWT, logout is typically handled client-side by removing the token
       // For additional security, you could implement a token blacklist in Redis
 
       const response: IApiResponse = {
         success: true,
-        message: 'Logged out successfully',
+        message: translate('auth.logoutSuccess', lang),
         data: {
-          message: 'Please remove the token from client storage',
+          message: translate('auth.logoutMessage', lang),
         },
       };
 
@@ -184,8 +189,10 @@ class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
+      const lang = getLanguage(req);
+
       if (!req.user) {
-        throw unauthorizedError('User not authenticated');
+        throw unauthorizedError(translate('auth.authRequired', lang));
       }
 
       const user = await User.findById(req.user.userId);
@@ -195,7 +202,7 @@ class AuthController {
 
       const response: IApiResponse = {
         success: true,
-        message: 'Profile retrieved successfully',
+        message: translate('auth.profileRetrieved', lang),
         data: {
           user: user.toSafeObject(),
         },
@@ -222,8 +229,10 @@ class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
+      const lang = getLanguage(req);
+
       if (!req.user) {
-        throw unauthorizedError('User not authenticated');
+        throw unauthorizedError(translate('auth.authRequired', lang));
       }
 
       const user = await User.findById(req.user.userId);
@@ -237,7 +246,7 @@ class AuthController {
       const isValidOperation = updates.every(update => allowedUpdates.includes(update));
 
       if (!isValidOperation) {
-        throw createError('Invalid updates', 400);
+        throw createError(translate('auth.invalidUpdates', lang), 400);
       }
 
       // Apply updates
@@ -249,7 +258,7 @@ class AuthController {
 
       const response: IApiResponse = {
         success: true,
-        message: 'Profile updated successfully',
+        message: translate('auth.profileUpdated', lang),
         data: {
           user: updatedUser.toSafeObject(),
         },
@@ -270,27 +279,34 @@ class AuthController {
    * @param {NextFunction} next - Express next function
    * @returns {Promise<void>}
    */
-public async deleteAccount(
-  req: IAuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    if (!req.user) {
-      throw unauthorizedError('User not authenticated');
-    }
+  public async deleteAccount(
+    req: IAuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const lang = getLanguage(req);
+
+      if (!req.user) {
+        throw unauthorizedError(translate('auth.authRequired', lang));
+      }
 
     const { password } = req.body;
 
-    if (!password) {
-      throw createError('Password confirmation is required to delete account', 400);
-    }
+      if (!password) {
+        throw createError(translate('auth.passwordRequired', lang), 400);
+      }
 
-    const user = await User.findById(req.user.userId).select('+password');
-    if (!user || !user.isActive) {
-      throw notFoundError('User');
-    }
+      const user = await User.findById(req.user.userId).select('+password');
+      if (!user || !user.isActive) {
+        throw notFoundError('User');
+      }
 
+      // Verify password
+      const isPasswordValid = await user.comparePassword(password);
+      if (!isPasswordValid) {
+        throw unauthorizedError(translate('auth.invalidPassword', lang));
+      }
     // Verify password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
@@ -298,15 +314,13 @@ public async deleteAccount(
     }
 
     await User.findByIdAndDelete(req.user.userId);
-
-    const response: IApiResponse = {
-      success: true,
-      message: 'Account permanently deleted', 
-      data: {
-        message: 'Your account has been permanently removed. We\'re sorry to see you go!',
-      },
-    };
-
+      const response: IApiResponse = {
+        success: true,
+        message: translate('auth.accountDeleted', lang),
+        data: {
+          message: translate('auth.accountDeletedMessage', lang),
+        },
+      };
     res.status(200).json(response);
   } catch (error) {
     next(error);
@@ -329,6 +343,7 @@ public async deleteAccount(
   ): Promise<void> {
     try {
       const { email }: IPasswordResetData = req.body;
+      const lang = getLanguage(req);
 
       // Find user by email
       const user = await User.findOne({ email, isActive: true });
@@ -336,9 +351,9 @@ public async deleteAccount(
       // Always return success to prevent email enumeration attacks
       const response: IApiResponse = {
         success: true,
-        message: 'If an account with that email exists, a password reset link has been sent.',
+        message: translate('auth.passwordResetRequested', lang),
         data: {
-          message: 'Please check your email for further instructions.',
+          message: translate('auth.passwordResetMessage', lang),
         },
       };
 
@@ -382,13 +397,14 @@ public async deleteAccount(
   ): Promise<void> {
     try {
       const { token, newPassword, confirmPassword }: IPasswordResetConfirm = req.body;
+      const lang = getLanguage(req);
 
       if (!token || !newPassword || !confirmPassword) {
-        throw createError('Token, new password, and password confirmation are required', 400);
+        throw createError(translate('auth.resetTokenRequired', lang), 400);
       }
 
       if (newPassword !== confirmPassword) {
-        throw createError('Password confirmation does not match new password', 400);
+        throw createError(translate('validation.password.newMismatch', lang), 400);
       }
 
       
@@ -407,7 +423,7 @@ public async deleteAccount(
 
       // 3. Si no se encuentra un usuario, el token es inválido o expiró
       if (!user) {
-        throw createError('Invalid or expired password reset token', 400);
+        throw createError(translate('auth.tokenInvalid', lang), 400);
       }
       
       
@@ -424,9 +440,9 @@ public async deleteAccount(
 
       const response: IApiResponse = {
         success: true,
-        message: 'Password reset successfully',
+        message: translate('auth.passwordResetSuccess', lang),
         data: {
-          message: 'Your password has been updated. Please log in with your new password.',
+          message: translate('auth.passwordResetSuccessMessage', lang),
         },
       };
 
@@ -452,18 +468,20 @@ public async deleteAccount(
     next: NextFunction
   ): Promise<void> {
     try {
+      const lang = getLanguage(req);
+
       if (!req.user) {
-        throw unauthorizedError('User not authenticated');
+        throw unauthorizedError(translate('auth.authRequired', lang));
       }
 
       const { currentPassword, newPassword, confirmPassword } = req.body;
 
       if (!currentPassword || !newPassword || !confirmPassword) {
-        throw createError('Current password, new password, and confirmation are required', 400);
+        throw createError(translate('auth.passwordChangeRequired', lang), 400);
       }
 
       if (newPassword !== confirmPassword) {
-        throw createError('Password confirmation does not match new password', 400);
+        throw createError(translate('validation.password.newMismatch', lang), 400);
       }
 
       const user = await User.findById(req.user.userId).select('+password');
@@ -474,7 +492,7 @@ public async deleteAccount(
       // Verify current password
       const isCurrentPasswordValid = await user.comparePassword(currentPassword);
       if (!isCurrentPasswordValid) {
-        throw unauthorizedError('Current password is incorrect');
+        throw unauthorizedError(translate('auth.incorrectPassword', lang));
       }
 
       // Update password
@@ -483,9 +501,9 @@ public async deleteAccount(
 
       const response: IApiResponse = {
         success: true,
-        message: 'Password changed successfully',
+        message: translate('auth.passwordChanged', lang),
         data: {
-          message: 'Your password has been updated successfully.',
+          message: translate('auth.passwordChangedMessage', lang),
         },
       };
 
@@ -510,14 +528,16 @@ public async deleteAccount(
     next: NextFunction
   ): Promise<void> {
     try {
+      const lang = getLanguage(req);
+
       // If we reach here, the authenticate middleware has already verified the token
       if (!req.user) {
-        throw unauthorizedError('Invalid token');
+        throw unauthorizedError(translate('auth.tokenInvalid', lang));
       }
 
       const response: IApiResponse = {
         success: true,
-        message: 'Token is valid',
+        message: translate('auth.tokenValid', lang),
         data: {
           user: {
             userId: req.user.userId,

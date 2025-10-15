@@ -12,6 +12,8 @@ import helmet from 'helmet';
 import { connectToDatabase } from './config/database';
 import { environment } from './config/environment';
 import { emailService } from './services/emailService';
+import { initializeI18n } from './config/i18n';
+import { languageDetector } from './middleware/language';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import { IApiResponse } from './types';
 import authRoutes from './routes/authRoutes';
@@ -71,6 +73,9 @@ class Server {
     // Body parsing middleware
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+    // Language detection middleware
+    this.app.use(languageDetector);
 
     // Request logging in development
     if (environment.isDevelopment()) {
@@ -179,6 +184,10 @@ class Server {
       if (environment.isDevelopment()) {
         environment.printConfig();
       }
+
+      // Initialize i18n
+      console.log('\nInitializing internationalization...');
+      await initializeI18n();
 
       // Connect to database
       console.log('\nConnecting to database...');

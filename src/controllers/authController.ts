@@ -291,7 +291,7 @@ class AuthController {
         throw unauthorizedError(translate('auth.authRequired', lang));
       }
 
-    const { password } = req.body;
+      const { password } = req.body;
 
       if (!password) {
         throw createError(translate('auth.passwordRequired', lang), 400);
@@ -307,13 +307,10 @@ class AuthController {
       if (!isPasswordValid) {
         throw unauthorizedError(translate('auth.invalidPassword', lang));
       }
-    // Verify password
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      throw unauthorizedError('Invalid password');
-    }
 
-    await User.findByIdAndDelete(req.user.userId);
+      // Hard delete user from database
+      await User.findByIdAndDelete(req.user.userId);
+
       const response: IApiResponse = {
         success: true,
         message: translate('auth.accountDeleted', lang),
@@ -321,11 +318,12 @@ class AuthController {
           message: translate('auth.accountDeletedMessage', lang),
         },
       };
-    res.status(200).json(response);
-  } catch (error) {
-    next(error);
+
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
   }
-}
 
   /**
    * @method requestPasswordReset

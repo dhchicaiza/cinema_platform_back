@@ -22,6 +22,7 @@ import { createError, notFoundError, unauthorizedError, conflictError } from '..
 import { environment } from '../config/environment';
 import { translate } from '../config/i18n';
 import { getLanguage } from '../middleware/language';
+import crypto from 'crypto';
 
 /**
  * @class AuthController
@@ -290,7 +291,7 @@ class AuthController {
         throw unauthorizedError(translate('auth.authRequired', lang));
       }
 
-      const { password } = req.body;
+    const { password } = req.body;
 
       if (!password) {
         throw createError(translate('auth.passwordRequired', lang), 400);
@@ -306,16 +307,13 @@ class AuthController {
       if (!isPasswordValid) {
         throw unauthorizedError(translate('auth.invalidPassword', lang));
       }
+    // Verify password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      throw unauthorizedError('Invalid password');
+    }
 
-      // Soft delete: set isActive to false
-      user.isActive = false;
-      await user.save();
-
-      // TODO: In a real application, you might want to:
-      // 1. Remove user from all related collections (favorites, ratings, comments)
-      // 2. Add the user's token to a blacklist
-      // 3. Send a confirmation email
-
+    await User.findByIdAndDelete(req.user.userId);
       const response: IApiResponse = {
         success: true,
         message: translate('auth.accountDeleted', lang),
@@ -323,12 +321,11 @@ class AuthController {
           message: translate('auth.accountDeletedMessage', lang),
         },
       };
-
-      res.status(200).json(response);
-    } catch (error) {
-      next(error);
-    }
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
   }
+}
 
   /**
    * @method requestPasswordReset
@@ -393,7 +390,7 @@ class AuthController {
    * @param {NextFunction} next - Express next function
    * @returns {Promise<void>}
    */
-  public async resetPassword(
+   public async resetPassword(
     req: IAuthenticatedRequest,
     res: Response,
     next: NextFunction
@@ -410,14 +407,26 @@ class AuthController {
         throw createError(translate('validation.password.newMismatch', lang), 400);
       }
 
-      // Find user with valid reset token
-      const user = await User.findOne({
-        isActive: true,
-      }).select('+passwordResetToken +passwordResetExpires');
+      
 
-      if (!user || !user.isPasswordResetTokenValid(token)) {
+      // 1. Hashea el token que viene del frontend para que coincida con el de la BD 🔑
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+      // 2. Busca al usuario por el token hasheado Y que no haya expirado 🕵️‍♂️
+      const user = await User.findOne({ 
+        passwordResetToken: hashedToken, 
+        passwordResetExpires: { $gt: Date.now() } // $gt significa "greater than" (mayor que)
+      });
+
+      // 3. Si no se encuentra un usuario, el token es inválido o expiró
+      if (!user) {
         throw createError(translate('auth.tokenInvalid', lang), 400);
       }
+      
+      
 
       // Update password and clear reset token
       user.password = newPassword;
@@ -442,6 +451,7 @@ class AuthController {
       next(error);
     }
   }
+
 
   /**
    * @method changePassword

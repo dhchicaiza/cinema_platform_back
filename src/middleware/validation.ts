@@ -9,6 +9,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { IApiResponse, ValidationError, IUserRegistration, IUserLogin, IUserProfile } from '../types';
 import { validationError } from './errorHandler';
+import { translate } from '../config/i18n';
+import { getLanguage } from './language';
 
 /**
  * @class ValidationManager
@@ -31,26 +33,27 @@ class ValidationManager {
    * @method validatePassword
    * @description Validates password strength
    * @param {string} password - Password to validate
+   * @param {string} lang - Language code for error messages
    * @returns {object} Validation result with isValid and errors
    * @static
    */
-  static validatePassword(password: string): { isValid: boolean; errors: string[] } {
+  static validatePassword(password: string, lang: string = 'en'): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (password.length < 8) {
-      errors.push('Password must be at least 8 characters long');
+      errors.push(translate('validation.password.minLength', lang));
     }
 
     if (!/[a-z]/.test(password)) {
-      errors.push('Password must contain at least one lowercase letter');
+      errors.push(translate('validation.password.lowercase', lang));
     }
 
     if (!/[A-Z]/.test(password)) {
-      errors.push('Password must contain at least one uppercase letter');
+      errors.push(translate('validation.password.uppercase', lang));
     }
 
     if (!/\d/.test(password)) {
-      errors.push('Password must contain at least one number');
+      errors.push(translate('validation.password.number', lang));
     }
 
     return {
@@ -136,10 +139,11 @@ class ValidationManager {
    * @method validatePaginationParams
    * @description Validates pagination parameters
    * @param {any} params - Pagination parameters to validate
+   * @param {string} lang - Language code for error messages
    * @returns {object} Validation result with sanitized params
    * @static
    */
-  static validatePaginationParams(params: any): {
+  static validatePaginationParams(params: any, lang: string = 'en'): {
     isValid: boolean;
     errors: string[];
     sanitized: { page: number; limit: number };
@@ -151,7 +155,7 @@ class ValidationManager {
     if (params.page !== undefined) {
       const parsedPage = parseInt(params.page, 10);
       if (isNaN(parsedPage) || parsedPage < 1) {
-        errors.push('Page must be a positive integer');
+        errors.push(translate('validation.pagination.pagePositive', lang));
       } else {
         page = parsedPage;
       }
@@ -160,7 +164,7 @@ class ValidationManager {
     if (params.limit !== undefined) {
       const parsedLimit = parseInt(params.limit, 10);
       if (isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 100) {
-        errors.push('Limit must be a positive integer between 1 and 100');
+        errors.push(translate('validation.pagination.limitRange', lang));
       } else {
         limit = parsedLimit;
       }
@@ -189,56 +193,57 @@ export const validateUserRegistration = (
   try {
     const data: IUserRegistration = req.body;
     const errors: ValidationError[] = [];
+    const lang = getLanguage(req);
 
     // Validate first name
     if (!data.firstName || typeof data.firstName !== 'string') {
-      errors.push({ field: 'firstName', message: 'First name is required' });
+      errors.push({ field: 'firstName', message: translate('validation.required.firstName', lang) });
     } else if (!ValidationManager.validateName(data.firstName)) {
       errors.push({
         field: 'firstName',
-        message: 'First name must be 2-50 characters and contain only letters and spaces',
+        message: translate('validation.invalid.firstName', lang),
         value: data.firstName,
       });
     }
 
     // Validate last name
     if (!data.lastName || typeof data.lastName !== 'string') {
-      errors.push({ field: 'lastName', message: 'Last name is required' });
+      errors.push({ field: 'lastName', message: translate('validation.required.lastName', lang) });
     } else if (!ValidationManager.validateName(data.lastName)) {
       errors.push({
         field: 'lastName',
-        message: 'Last name must be 2-50 characters and contain only letters and spaces',
+        message: translate('validation.invalid.lastName', lang),
         value: data.lastName,
       });
     }
 
     // Validate email
     if (!data.email || typeof data.email !== 'string') {
-      errors.push({ field: 'email', message: 'Email is required' });
+      errors.push({ field: 'email', message: translate('validation.required.email', lang) });
     } else if (!ValidationManager.validateEmail(data.email)) {
       errors.push({
         field: 'email',
-        message: 'Please provide a valid email address',
+        message: translate('validation.invalid.email', lang),
         value: data.email,
       });
     }
 
     // Validate age
     if (data.age === undefined || data.age === null) {
-      errors.push({ field: 'age', message: 'Age is required' });
+      errors.push({ field: 'age', message: translate('validation.required.age', lang) });
     } else if (!ValidationManager.validateAge(data.age)) {
       errors.push({
         field: 'age',
-        message: 'Age must be between 13 and 120 years',
+        message: translate('validation.invalid.age', lang),
         value: data.age,
       });
     }
 
     // Validate password
     if (!data.password || typeof data.password !== 'string') {
-      errors.push({ field: 'password', message: 'Password is required' });
+      errors.push({ field: 'password', message: translate('validation.required.password', lang) });
     } else {
-      const passwordValidation = ValidationManager.validatePassword(data.password);
+      const passwordValidation = ValidationManager.validatePassword(data.password, lang);
       if (!passwordValidation.isValid) {
         passwordValidation.errors.forEach(error => {
           errors.push({ field: 'password', message: error });
@@ -248,19 +253,19 @@ export const validateUserRegistration = (
 
     // Validate confirm password
     if (!data.confirmPassword || typeof data.confirmPassword !== 'string') {
-      errors.push({ field: 'confirmPassword', message: 'Password confirmation is required' });
+      errors.push({ field: 'confirmPassword', message: translate('validation.required.confirmPassword', lang) });
     } else if (data.password !== data.confirmPassword) {
       errors.push({
         field: 'confirmPassword',
-        message: 'Password confirmation does not match password',
+        message: translate('validation.password.mismatch', lang),
       });
     }
 
     if (errors.length > 0) {
       const response: IApiResponse = {
         success: false,
-        message: 'Validation failed',
-        error: 'Please check the provided data',
+        message: translate('validation.failed', lang),
+        error: translate('validation.checkData', lang),
         errors: errors.map(err => `${err.field}: ${err.message}`),
       };
       res.status(422).json(response);
@@ -293,30 +298,31 @@ export const validateUserLogin = (
   try {
     const data: IUserLogin = req.body;
     const errors: ValidationError[] = [];
+    const lang = getLanguage(req);
 
     // Validate email
     if (!data.email || typeof data.email !== 'string') {
-      errors.push({ field: 'email', message: 'Email is required' });
+      errors.push({ field: 'email', message: translate('validation.required.email', lang) });
     } else if (!ValidationManager.validateEmail(data.email)) {
       errors.push({
         field: 'email',
-        message: 'Please provide a valid email address',
+        message: translate('validation.invalid.email', lang),
         value: data.email,
       });
     }
 
     // Validate password
     if (!data.password || typeof data.password !== 'string') {
-      errors.push({ field: 'password', message: 'Password is required' });
+      errors.push({ field: 'password', message: translate('validation.required.password', lang) });
     } else if (data.password.length < 1) {
-      errors.push({ field: 'password', message: 'Password cannot be empty' });
+      errors.push({ field: 'password', message: translate('validation.password.empty', lang) });
     }
 
     if (errors.length > 0) {
       const response: IApiResponse = {
         success: false,
-        message: 'Validation failed',
-        error: 'Please check the provided credentials',
+        message: translate('validation.failed', lang),
+        error: translate('validation.checkCredentials', lang),
         errors: errors.map(err => `${err.field}: ${err.message}`),
       };
       res.status(422).json(response);
@@ -347,13 +353,14 @@ export const validateUserProfile = (
   try {
     const data: IUserProfile = req.body;
     const errors: ValidationError[] = [];
+    const lang = getLanguage(req);
 
     // Validate first name (optional)
     if (data.firstName !== undefined) {
       if (typeof data.firstName !== 'string' || !ValidationManager.validateName(data.firstName)) {
         errors.push({
           field: 'firstName',
-          message: 'First name must be 2-50 characters and contain only letters and spaces',
+          message: translate('validation.invalid.firstName', lang),
           value: data.firstName,
         });
       }
@@ -364,7 +371,7 @@ export const validateUserProfile = (
       if (typeof data.lastName !== 'string' || !ValidationManager.validateName(data.lastName)) {
         errors.push({
           field: 'lastName',
-          message: 'Last name must be 2-50 characters and contain only letters and spaces',
+          message: translate('validation.invalid.lastName', lang),
           value: data.lastName,
         });
       }
@@ -375,7 +382,7 @@ export const validateUserProfile = (
       if (typeof data.email !== 'string' || !ValidationManager.validateEmail(data.email)) {
         errors.push({
           field: 'email',
-          message: 'Please provide a valid email address',
+          message: translate('validation.invalid.email', lang),
           value: data.email,
         });
       }
@@ -386,7 +393,7 @@ export const validateUserProfile = (
       if (!ValidationManager.validateAge(data.age)) {
         errors.push({
           field: 'age',
-          message: 'Age must be between 13 and 120 years',
+          message: translate('validation.invalid.age', lang),
           value: data.age,
         });
       }
@@ -397,7 +404,7 @@ export const validateUserProfile = (
       if (typeof data.avatar !== 'string' || !ValidationManager.validateUrl(data.avatar)) {
         errors.push({
           field: 'avatar',
-          message: 'Avatar must be a valid URL',
+          message: translate('validation.invalid.avatar', lang),
           value: data.avatar,
         });
       }
@@ -406,8 +413,8 @@ export const validateUserProfile = (
     if (errors.length > 0) {
       const response: IApiResponse = {
         success: false,
-        message: 'Validation failed',
-        error: 'Please check the provided data',
+        message: translate('validation.failed', lang),
+        error: translate('validation.checkData', lang),
         errors: errors.map(err => `${err.field}: ${err.message}`),
       };
       res.status(422).json(response);
@@ -441,12 +448,13 @@ export const validateObjectId = (paramName: string = 'id') => {
   return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const id = req.params[paramName];
+      const lang = getLanguage(req);
 
       if (!id) {
         const response: IApiResponse = {
           success: false,
-          message: `${paramName} parameter is required`,
-          error: 'Missing required parameter',
+          message: translate('errors.missingParameter', lang, { param: paramName }),
+          error: translate('errors.missingParameter', lang, { param: paramName }),
         };
         res.status(400).json(response);
         return;
@@ -455,8 +463,8 @@ export const validateObjectId = (paramName: string = 'id') => {
       if (!ValidationManager.validateObjectId(id)) {
         const response: IApiResponse = {
           success: false,
-          message: `Invalid ${paramName} format`,
-          error: 'Please provide a valid ID',
+          message: translate('errors.invalidParameter', lang, { param: paramName }),
+          error: translate('validation.invalid.objectId', lang),
         };
         res.status(400).json(response);
         return;
@@ -483,12 +491,13 @@ export const validateRating = (
 ): void => {
   try {
     const { rating } = req.body;
+    const lang = getLanguage(req);
 
     if (rating === undefined || rating === null) {
       const response: IApiResponse = {
         success: false,
-        message: 'Rating is required',
-        error: 'Please provide a rating between 1 and 5 stars',
+        message: translate('errors.invalidRating', lang),
+        error: translate('errors.invalidRatingMessage', lang),
       };
       res.status(422).json(response);
       return;
@@ -497,8 +506,8 @@ export const validateRating = (
     if (!ValidationManager.validateRating(rating)) {
       const response: IApiResponse = {
         success: false,
-        message: 'Invalid rating value',
-        error: 'Rating must be an integer between 1 and 5',
+        message: translate('errors.invalidRatingValue', lang),
+        error: translate('validation.invalid.rating', lang),
       };
       res.status(422).json(response);
       return;
@@ -523,13 +532,14 @@ export const validatePagination = (
   next: NextFunction
 ): void => {
   try {
-    const validation = ValidationManager.validatePaginationParams(req.query);
+    const lang = getLanguage(req);
+    const validation = ValidationManager.validatePaginationParams(req.query, lang);
 
     if (!validation.isValid) {
       const response: IApiResponse = {
         success: false,
-        message: 'Invalid pagination parameters',
-        error: 'Please check your pagination parameters',
+        message: translate('errors.invalidPagination', lang),
+        error: translate('validation.checkPagination', lang),
         errors: validation.errors,
       };
       res.status(400).json(response);

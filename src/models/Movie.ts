@@ -137,10 +137,12 @@ const MovieSchema = new Schema<IMovieDocument, IMovieModel>(
     },
     poster: {
       type: String,
-      required: [true, 'Poster URL is required'],
+      required: false, // Optional - can be added later via upload endpoint
+      default: null,
       trim: true,
       validate: {
         validator: function (url: string): boolean {
+          if (!url) return true; // Allow null/empty
           try {
             const urlObj = new URL(url);
             return ['http:', 'https:'].includes(urlObj.protocol);
@@ -153,10 +155,12 @@ const MovieSchema = new Schema<IMovieDocument, IMovieModel>(
     },
     videoUrl: {
       type: String,
-      required: [true, 'Video URL is required'],
+      required: false, // Optional - can be added later via upload endpoint
+      default: null,
       trim: true,
       validate: {
         validator: function (url: string): boolean {
+          if (!url) return true; // Allow null/empty
           try {
             const urlObj = new URL(url);
             return ['http:', 'https:'].includes(urlObj.protocol);

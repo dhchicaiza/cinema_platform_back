@@ -7,7 +7,7 @@
     "build": "tsc && npm run copy-locales",
     "copy-locales": "mkdir -p dist/locales && cp -r src/locales/* dist/locales/",
     "start": "node dist/index.js",
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
     "docs": "jsdoc -c jsdoc.conf.json",
     "docs:watch": "concurrently \"npm run docs\" \"nodemon --watch src --ext ts --exec npm run docs\"",
     "lint": "echo 'Linting...'",
@@ -35,6 +35,7 @@
     "i18next": "^25.6.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.2",
+    "multer": "^2.0.2",
     "nodemailer": "^7.0.6"
   },
   "devDependencies": {
@@ -42,12 +43,14 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.5.2",
     "@types/nodemailer": "^7.0.1",
     "concurrently": "^9.2.1",
     "jsdoc": "^4.0.4",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"
   }
 }

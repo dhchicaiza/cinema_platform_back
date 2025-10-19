@@ -546,8 +546,8 @@ export class MovieController {
     try {
       const movieData = req.body;
 
-      // Validate required fields
-      const requiredFields = ['title', 'description', 'genre', 'duration', 'releaseYear', 'poster', 'videoUrl'];
+      // Validate required fields (poster and videoUrl are optional, can be added later via upload endpoints)
+      const requiredFields = ['title', 'description', 'genre', 'duration', 'releaseYear'];
       const missingFields = requiredFields.filter((field) => !movieData[field]);
 
       if (missingFields.length > 0) {

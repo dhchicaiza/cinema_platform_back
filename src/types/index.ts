@@ -71,16 +71,22 @@ export interface IMovie {
   _id?: string;
   title: string;
   description: string;
-  genre: string[];
-  duration: number;
-  poster: string;
-  videoUrl: string;
+  genre: MovieGenre[];
+  duration: number; // Duration in minutes
+  releaseYear: number;
+  director?: string;
+  cast?: string[];
+  poster: string; // URL to poster image
+  videoUrl: string; // URL to video source
+  videoProvider?: 'cloudinary' | 'pexels' | 'youtube' | 'external';
   subtitles?: {
-    spanish?: string;
-    english?: string;
+    spanish?: string; // URL to Spanish subtitle file (.vtt)
+    english?: string; // URL to English subtitle file (.vtt)
   };
-  averageRating?: number;
-  totalRatings?: number;
+  averageRating?: number; // Calculated average rating (0-5)
+  totalRatings?: number; // Total number of ratings
+  views?: number; // View counter
+  isActive?: boolean; // Soft delete flag
   createdAt?: Date;
   updatedAt?: Date;
 }

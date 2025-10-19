@@ -37,16 +37,24 @@ A robust and scalable backend API for a movie streaming platform built with Node
   - Input validation and sanitization
   - SQL injection and XSS protection
 
+### Sprint 2 - Movies & User Interactions (In Progress)
+- **Movie Management** Model Completed
+  - Complete movie catalog with detailed metadata
+  - Search by title and filter by genre
+  - Video streaming integration (Cloudinary/Pexels/YouTube)
+  - Subtitle support (Spanish/English) with .vtt files
+  - View counter and popularity tracking
+  - 14 valid movie genres support
+
+- **Favorites System** Completed
+  - Add/remove movies to favorites
+  - View user's favorite movies with pagination
+  - Check favorite status
+  - Count favorites (user and movie)
+  - Clear all favorites
+  - 7 fully functional endpoints
+
 ### Upcoming Features (Future Sprints)
-- **Movie Management** (Sprint 1)
-  - Movie catalog with search and filters
-  - Video streaming integration (Cloudinary/Pexels)
-  - Subtitle support (Spanish/English)
-
-- **User Interactions** (Sprint 2)
-  - Favorites system
-  - Movie ratings (1-5 stars)
-
 - **Social Features** (Sprint 3)
   - Comments and reviews
   - User activity tracking

@@ -17,6 +17,8 @@ import { languageDetector } from './middleware/language';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import { IApiResponse } from './types';
 import authRoutes from './routes/authRoutes';
+import movieRoutes from './routes/movieRoutes';
+import favoriteRoutes from './routes/favoriteRoutes';
 
 /**
  * @class Server
@@ -133,9 +135,9 @@ class Server {
 
     // API routes
     this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/movies', movieRoutes);
+    this.app.use('/api/favorites', favoriteRoutes);
     // this.app.use('/api/users', userRoutes);      // Will be implemented in future sprints
-    // this.app.use('/api/movies', movieRoutes);    // Will be implemented in future sprints
-    // this.app.use('/api/favorites', favoriteRoutes); // Will be implemented in future sprints
     // this.app.use('/api/ratings', ratingRoutes);  // Will be implemented in future sprints
     // this.app.use('/api/comments', commentRoutes); // Will be implemented in future sprints
 

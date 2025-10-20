@@ -11,7 +11,6 @@ import { Favorite, IFavoriteDocument } from '../models/Favorite';
 import { Movie } from '../models/Movie';
 import { IAuthenticatedRequest, IApiResponse } from '../types';
 import { createError } from '../middleware/errorHandler';
-import { url } from 'inspector';
 
 /**
  * @class FavoriteController

@@ -11,6 +11,7 @@ import { Favorite, IFavoriteDocument } from '../models/Favorite';
 import { Movie } from '../models/Movie';
 import { IAuthenticatedRequest, IApiResponse } from '../types';
 import { createError } from '../middleware/errorHandler';
+import { url } from 'inspector';
 
 /**
  * @class FavoriteController
@@ -144,6 +145,7 @@ export class FavoriteController {
               title: movie.title,
               description: movie.description,
               genre: movie.genre,
+              url: movie.videoUrl,
               duration: movie.duration,
               releaseYear: movie.releaseYear,
               director: movie.director,

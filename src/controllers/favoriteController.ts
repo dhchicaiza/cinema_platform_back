@@ -144,7 +144,7 @@ export class FavoriteController {
               title: movie.title,
               description: movie.description,
               genre: movie.genre,
-              url: movie.videoUrl,
+              videoUrl: movie.videoUrl,
               duration: movie.duration,
               releaseYear: movie.releaseYear,
               director: movie.director,

@@ -177,5 +177,27 @@
     "uploadFailed": "File upload failed",
     "deleteFailed": "File deletion failed",
     "noFileProvided": "No file provided"
+  },
+  "comments": {
+    "created": "Comment created successfully",
+    "updated": "Comment updated successfully",
+    "deleted": "Comment deleted successfully",
+    "retrieved": "Comment retrieved successfully",
+    "listRetrieved": "Comments retrieved successfully",
+    "countRetrieved": "Comment count retrieved successfully",
+    "userCommentsRetrieved": "User comments retrieved successfully",
+    "notFound": "Comment not found",
+    "notFoundMessage": "The requested comment does not exist or has been removed",
+    "unauthorized": "Unauthorized action",
+    "unauthorizedEdit": "You can only edit your own comments",
+    "unauthorizedDelete": "You can only delete your own comments",
+    "contentRequired": "Comment content is required",
+    "contentTooShort": "Comment must be at least 1 character long",
+    "contentTooLong": "Comment cannot exceed 1000 characters",
+    "movieNotFound": "Movie not found",
+    "movieNotFoundMessage": "The movie you're trying to comment on does not exist",
+    "noCommentsFound": "No comments found",
+    "noCommentsFoundMessage": "No comments available for this movie yet",
+    "userNoComments": "You haven't made any comments yet"
   }
 }

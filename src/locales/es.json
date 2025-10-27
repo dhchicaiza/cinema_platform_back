@@ -177,5 +177,27 @@
     "uploadFailed": "Falló la subida del archivo",
     "deleteFailed": "Falló la eliminación del archivo",
     "noFileProvided": "No se proporcionó ningún archivo"
+  },
+  "comments": {
+    "created": "Comentario creado exitosamente",
+    "updated": "Comentario actualizado exitosamente",
+    "deleted": "Comentario eliminado exitosamente",
+    "retrieved": "Comentario obtenido exitosamente",
+    "listRetrieved": "Comentarios obtenidos exitosamente",
+    "countRetrieved": "Recuento de comentarios obtenido exitosamente",
+    "userCommentsRetrieved": "Comentarios de usuario obtenidos exitosamente",
+    "notFound": "Comentario no encontrado",
+    "notFoundMessage": "El comentario solicitado no existe o ha sido eliminado",
+    "unauthorized": "Acción no autorizada",
+    "unauthorizedEdit": "Solo puedes editar tus propios comentarios",
+    "unauthorizedDelete": "Solo puedes eliminar tus propios comentarios",
+    "contentRequired": "El contenido del comentario es requerido",
+    "contentTooShort": "El comentario debe tener al menos 1 carácter",
+    "contentTooLong": "El comentario no puede exceder 1000 caracteres",
+    "movieNotFound": "Película no encontrada",
+    "movieNotFoundMessage": "La película que intentas comentar no existe",
+    "noCommentsFound": "No se encontraron comentarios",
+    "noCommentsFoundMessage": "Aún no hay comentarios disponibles para esta película",
+    "userNoComments": "Aún no has hecho ningún comentario"
   }
 }
